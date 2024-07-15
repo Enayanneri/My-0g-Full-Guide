@@ -12,3 +12,12 @@ This repository contains my complete guide to launching all nodes of the 0g_labs
 |Storage-RPC|https://rpc-storage-testnet.0g.ai|
 |Chain-Explorer|https://chainscan-newton.0g.ai/|
 |Storage-Explorer|https://storagescan-newton.0g.ai/|
+
+# Validator Node
+## Hardware Req
+|key|value|
+|:-:|:---:|
+|Memory|64 GB|
+|CPU|8 cores|
+|Disk|1 TB NVME SSD|
+|Bandwidth|100 MBps|
