@@ -54,3 +54,97 @@ seeds = "<node-id>@<ip>:<p2p port>"
 ```
 0gchaind start
 ```
+
+## Create Validator
+```
+0gchaind keys add <key_name> --eth
+
+0gchaind tx staking create-validator \
+  --amount=<staking_amount>ua0gi \
+  --pubkey=$(0gchaind tendermint show-validator) \
+  --moniker="<your_validator_name>" \
+  --chain-id=zgtendermint_16600-2 \
+  --commission-rate="0.10" \
+  --commission-max-rate="0.20" \
+  --commission-max-change-rate="0.01" \
+  --min-self-delegation="1" \
+  --from=<key_name> \
+  --gas=auto \
+  --gas-adjustment=1.4
+```
+
+# Storage Node
+## Hardware Req
+|key|value|
+|:-:|:---:|
+|Memory|16 GB|
+|CPU|4 cores|
+|Disk|500 GB / 1 TB NVME SSD|
+|Bandwidth|500 MBps|
+
+## Clone storage Node source code and Build
+```
+git clone https://github.com/0glabs/0g-storage-client.git
+
+cd 0g-storage-client
+go build
+```
+## Run commands
+```
+./0g-storage-client upload --url <blockchain_rpc_endpoint> --contract <log_contract_address> --key <private_key> --node <storage_node_rpc_endpoint> --file <file_path>
+
+./0g-storage-client download --node <storage_node_rpc_endpoint> --root <file_root_hash> --file <output_file_path>
+
+./0g-storage-client download --node <storage_node_rpc_endpoint> --root <file_root_hash> --file <output_file_path> --proof
+```
+
+# Storage KV
+## Hardware Req
+|key|value|
+|:-:|:---:|
+|Memory|16 GB|
+|CPU|4 cores|
+|Disk|500 GB / 1 TB NVME SSD|
+|Bandwidth|500 MBps|
+
+## Clone source code
+```
+git clone -b v1.1.0-testnet https://github.com/0glabs/0g-storage-kv.git
+```
+
+## Build
+```
+cd 0g-storage-kv
+git submodule update --init
+
+cargo build --release
+```
+
+## Copy the config_example.toml to config.toml and update the parameters
+```
+# rpc endpoint
+rpc_listen_address
+# ips of storage service, separated by ","
+zgs_node_urls = "http://ip1:port1,http://ip2:port2,..."
+
+# layer one blockchain rpc endpoint
+blockchain_rpc_endpoint
+
+# flow contract address
+log_contract_address
+
+# block number to start the sync, better to align with the config in storage service
+log_sync_start_block_number
+
+# storage nodes to download data from, separated by ","
+# the provided nodes should cover full data in the storage network
+zgs_node_urls
+```
+
+## Run the kv service
+```
+cd run
+
+# consider using tmux in order to run in background
+../target/release/zgs_kv --config config.toml
+```
